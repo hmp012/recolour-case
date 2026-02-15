@@ -36,19 +36,6 @@ const ticketController = require('../controllers/ticket.controller');
  *       required:
  *         - style
  *         - priority
- *     Asset:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *           format: uuid
- *         filePath:
- *           type: string
- *         type:
- *           type: string
- *           enum: [Original, Recoloured]
- *       required:
- *         - filePath
  */
 
 /**
@@ -56,6 +43,7 @@ const ticketController = require('../controllers/ticket.controller');
  * /tickets:
  *   post:
  *     summary: Create a new ticket
+ *     tags: [Tickets]
  *     requestBody:
  *       required: true
  *       content:
@@ -75,6 +63,7 @@ router.post('/', ticketController.createTicket);
  * /tickets:
  *   get:
  *     summary: Get all tickets
+ *     tags: [Tickets]
  *     responses:
  *       '200':
  *         description: List of all tickets
@@ -94,6 +83,7 @@ router.get('/', ticketController.getAllTickets);
  * /tickets/{id}:
  *   get:
  *     summary: Get ticket by ID
+ *     tags: [Tickets]
  *     parameters:
  *       - in: path
  *         name: id
@@ -120,6 +110,7 @@ router.get('/:id', ticketController.getTicketById);
  * /tickets/{id}:
  *   patch:
  *     summary: Update a ticket (Status, Priority, Approval)
+ *     tags: [Tickets]
  *     parameters:
  *       - in: path
  *         name: id
