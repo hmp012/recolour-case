@@ -1,26 +1,40 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <c-box>
+    <AppNavbar />
+    <c-flex>
+      <SidebarPanel />
+      <c-box flex="1" ml="250px" p="8" bg="gray.50" min-h="calc(100vh - 70px)">
+        <router-view />
+      </c-box>
+    </c-flex>
+  </c-box>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import AppNavbar from '@/components/layout/Navbar.vue'
+import SidebarPanel from '@/components/layout/Sidebar.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    AppNavbar,
+    SidebarPanel
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<!-- <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-</style>
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+}
+</style> -->
