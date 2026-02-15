@@ -38,7 +38,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-sequelize.sync().then(() => {
+sequelize.sync({alter: true}).then(() => {
     app.listen(port, () => {
         console.log(`Server running on port ${port}`);
     });
