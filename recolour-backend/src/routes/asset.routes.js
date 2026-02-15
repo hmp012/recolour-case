@@ -7,6 +7,21 @@ const assetController = require('../controllers/asset.controller');
  * tags:
  *   name: Assets
  *   description: Library of original and recoloured photos
+ * components:
+ *  schemas:
+ *     Asset:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         filePath:
+ *           type: string
+ *         type:
+ *           type: string
+ *           enum: [Original, Recoloured]
+ *       required:
+ *         - filePath
  */
 
 /**
