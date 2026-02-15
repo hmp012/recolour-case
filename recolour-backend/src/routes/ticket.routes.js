@@ -25,6 +25,8 @@ const ticketController = require('../controllers/ticket.controller');
  *           enum: [Low, Medium, High]
  *         referenceCode:
  *           type: string
+ *         isApproved:
+ *           type: boolean
  *         baseAssetId:
  *           type: string
  *           format: uuid
@@ -112,5 +114,43 @@ router.get('/', ticketController.getAllTickets);
  *         description: Failed to retrieve ticket
  */
 router.get('/:id', ticketController.getTicketById);
+
+/**
+ * @openapi
+ * /tickets/{id}:
+ *   patch:
+ *     summary: Update a ticket (Status, Priority, Approval)
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [Pending, Sent, In Progress, Completed, Rejected]
+ *               priority:
+ *                 type: string
+ *                 enum: [Low, Medium, High]
+ *               isApproved:
+ *                 type: boolean
+ *               resultAssetId:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       '200':
+ *         description: Ticket updated successfully
+ *       '404':
+ *         description: Ticket not found
+ */
+router.patch('/:id', ticketController.updateTicket);
 
 module.exports = router;

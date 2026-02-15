@@ -20,6 +20,10 @@ const Ticket = sequelize.define('Ticket', {
     },
     referenceCode: {
         type: DataTypes.STRING
+    },
+    isApproved: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 });
 

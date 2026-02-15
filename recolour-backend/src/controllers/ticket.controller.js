@@ -38,3 +38,25 @@ exports.getTicketById = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve ticket: ' + error.message });
     }
 };
+
+exports.updateTicket = async (req, res) => {
+    try {
+        const ticket = await Ticket.findByPk(req.params.id);
+        if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+
+        const { status, priority, isApproved, resultAssetId } = req.body;
+
+        // Logic for Requirement 4: "reject to return to queue"
+        // If the admin sets status to Rejected, we might want to reset approval
+        await ticket.update({
+            status: status || ticket.status,
+            priority: priority || ticket.priority,
+            isApproved: isApproved !== undefined ? isApproved : ticket.isApproved,
+            resultAssetId: resultAssetId || ticket.resultAssetId
+        });
+
+        res.json(ticket);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update ticket: ' + error.message });
+    }
+};
