@@ -1,5 +1,5 @@
 <template>
-
+    <c-box></c-box>
 </template>
 
 <script>
