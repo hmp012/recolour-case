@@ -11,7 +11,7 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false
     },
     status: {
-        type: DataTypes.ENUM('Pending', 'Sent', 'In Progress', 'Completed', 'Rejected'),
+        type: DataTypes.ENUM('Pending', 'Approved', 'Sent', 'In Progress', 'Completed', 'Rejected'),
         defaultValue: 'Pending'
     },
     priority: {

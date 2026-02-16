@@ -62,19 +62,64 @@ exports.getTicketById = async (req, res) => {
 
 exports.updateTicket = async (req, res) => {
     try {
-        const ticket = await Ticket.findByPk(req.params.id);
+        const ticket = await Ticket.findByPk(req.params.id, {
+            include: [{ model: Asset, as: 'baseAssets' }]
+        });
         if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
 
         const { status, priority, isApproved, resultAssetId } = req.body;
 
-        // Logic for Requirement 4: "reject to return to queue"
-        // If the admin sets status to Rejected, we might want to reset approval
+        let effectiveResultAssetId = resultAssetId || ticket.resultAssetId;
+        
+        // Simulation: If status is 'Completed' (or transitioning to it) and there's no result asset
+        if ((status === 'Completed' || (ticket.status === 'Completed' && !status)) && !effectiveResultAssetId && ticket.baseAssets && ticket.baseAssets.length > 0) {
+            const baseAsset = ticket.baseAssets[0];
+            const resultPath = baseAsset.filePath.replace('.jpg', '_recoloured.jpg');
+            
+            try {
+                // Find or create the recoloured asset
+                let [resultAsset] = await Asset.findOrCreate({
+                    where: { filePath: resultPath },
+                    defaults: {
+                        type: 'Recoloured',
+                        isApproved: isApproved === true // Approve immediately if the ticket is being approved
+                    }
+                });
+                effectiveResultAssetId = resultAsset.id;
+            } catch (err) {
+                console.error('Error creating simulated result asset:', err);
+            }
+        }
+
         await ticket.update({
             status: status || ticket.status,
             priority: priority || ticket.priority,
             isApproved: isApproved !== undefined ? isApproved : ticket.isApproved,
-            resultAssetId: resultAssetId || ticket.resultAssetId
+            resultAssetId: effectiveResultAssetId
         });
+
+        // Requirement 4: If ticket is approved, ensure the result asset is also approved
+        if (isApproved === true && effectiveResultAssetId) {
+            await Asset.update({ isApproved: true }, { where: { id: effectiveResultAssetId } });
+        } else if (isApproved === false && effectiveResultAssetId) {
+            await Asset.update({ isApproved: false }, { where: { id: effectiveResultAssetId } });
+        }
+
+        res.json(ticket);
+
+        // Requirement 4: If ticket is approved, also approve the result asset
+        if (isApproved === true && ticket.resultAssetId) {
+            const resultAsset = await Asset.findByPk(ticket.resultAssetId);
+            if (resultAsset) {
+                await resultAsset.update({ isApproved: true });
+            }
+        } else if (isApproved === false && ticket.resultAssetId) {
+            // If explicitly rejected/unapproved, unapprove the asset too
+            const resultAsset = await Asset.findByPk(ticket.resultAssetId);
+            if (resultAsset) {
+                await resultAsset.update({ isApproved: false });
+            }
+        }
 
         res.json(ticket);
     } catch (error) {

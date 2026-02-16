@@ -25,6 +25,7 @@ Asset.belongsToMany(Ticket, {
 
 // A ticket has one result asset (the final recoloured photo)
 Ticket.belongsTo(Asset, { as: 'resultAsset', foreignKey: 'resultAssetId' });
+Asset.hasOne(Ticket, { as: 'ticket', foreignKey: 'resultAssetId' });
 
 module.exports = {
     Ticket,
