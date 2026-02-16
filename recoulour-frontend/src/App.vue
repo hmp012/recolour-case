@@ -23,6 +23,13 @@ export default {
 }
 </script>
 
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
+
 <style scoped>
 .app-layout {
   display: flex;
