@@ -1,13 +1,13 @@
 <template>
-  <c-box>
+  <div class="app-layout">
     <AppNavbar />
-    <c-flex>
+    <div class="app-content">
       <SidebarPanel />
-      <c-box flex="1" ml="250px" p="8" bg="gray.50" min-h="calc(100vh - 70px)">
+      <div class="main-content">
         <router-view />
-      </c-box>
-    </c-flex>
-  </c-box>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -22,4 +22,25 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f8fafc;
+  overflow-y: auto;
+}
+</style>
 

@@ -1,21 +1,26 @@
 <template>
-    <c-box bg="gray.800" color="white" px="4" py="4" box-shadow="md" pos="sticky" top="0" z-index="1000">
-        <c-flex justify-content="space-between" align-items="center">
-            <c-heading as="h1" size="lg" m="0">Recolour</c-heading>
-            
-            <c-hstack spacing="4">
-                <c-badge color-scheme="blue">{{ authStore.isManager ? 'Manager' : 'Operator' }}</c-badge>
-                <c-button size="sm" @click="authStore.toggleRole">Toggle Role</c-button>
-            </c-hstack>
-        </c-flex>
-    </c-box>
+  <div style="display: flex; flex-direction: row;">
+    <div style="display: flex; align-items: center; gap: 1.5vw; padding-inline: 1vw;">
+      <h1>Recoulour Manager</h1>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1.5vw; padding-inline: 1vw; margin-left: auto;">
+      <Tag style="font-size: 20px; padding: 0.6vw; padding-inline: 1vw;" :value="authStore.isManager ? 'Manager' : 'Employee'" severity="info" />
+      <Button label="Toggle Role" @click="authStore.toggleRole" :disabled="authStore.isAnimating" />
+    </div>
+  </div>
 </template>
 
 <script>
 import { useAuthStore } from '@/stores/authStore'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 
 export default {
   name: 'AppNavbar',
+  components: {
+    Button,
+    Tag
+  },
   setup() {
     const authStore = useAuthStore()
     return { authStore }
