@@ -19,7 +19,7 @@ const ticketController = require('../controllers/ticket.controller');
  *           type: string
  *         status:
  *           type: string
- *           enum: [Pending, Sent, In Progress, Completed, Rejected]
+ *           enum: [Pending, Sent, In Progress, Approved, Completed, Rejected]
  *         priority:
  *           type: string
  *           enum: [Low, Medium, High]

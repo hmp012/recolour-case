@@ -95,7 +95,7 @@
                   text 
                   rounded 
                   severity="success" 
-                  @click="handleApproval(data.id, 'Completed')" 
+                  @click="handleApproval(data.id, 'Approved')" 
                 />
                 <Button 
                   icon="pi pi-times" 
@@ -157,7 +157,7 @@ const handleApproval = async (id, status) => {
     await ticketService.update(id, { status })
     toast.add({
       severity: 'success',
-      summary: status === 'Completed' ? 'Ticket Accepted' : 'Ticket Rejected',
+      summary: status === 'Approved' ? 'Ticket Approved' : 'Ticket Rejected',
       detail: `Status updated to ${status}`,
       life: 3000
     })
@@ -186,6 +186,7 @@ const getStatusColor = (status) => {
     case 'Pending': return '#94a3b8' // Slate-400
     case 'Sent': return '#6366f1'    // Indigo-500
     case 'In Progress': return '#f59e0b' // Amber-500
+    case 'Approved': return '#22c55e'    // Green-500
     case 'Completed': return '#10b981'   // Emerald-500
     case 'Rejected': return '#ef4444'    // Red-500
     default: return '#cbd5e1'
