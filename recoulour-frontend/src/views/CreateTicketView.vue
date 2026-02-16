@@ -121,6 +121,11 @@
         </div>
 
         <div :style="{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }">
+          <label :style="{ fontSize: '0.875rem', color: '#94a3b8' }">Target Color</label>
+          <InputText v-model="form.targetColor" placeholder="e.g. Royal Blue" :style="{ width: '100%' }" />
+        </div>
+
+        <div :style="{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }">
           <label :style="{ fontSize: '0.875rem', color: '#94a3b8' }">Priority</label>
           <Select v-model="form.priority" :options="priorities" placeholder="Select Priority" :style="{ width: '100%' }" />
         </div>
@@ -190,13 +195,14 @@ const partners = ['Studio Pro', 'FastColor AI', 'Visual Arts HK', 'Elite Retouch
 
 const form = ref({
   style: '',
+  targetColor: '',
   priority: 'Medium',
   partner: '',
   referenceCode: ''
 })
 
 const isFormValid = computed(() => {
-  return selectedAsset.value && form.value.style.trim() && form.value.partner
+  return selectedAsset.value && form.value.style.trim() && form.value.targetColor.trim() && form.value.partner
 })
 
 const fetchAssets = async () => {
