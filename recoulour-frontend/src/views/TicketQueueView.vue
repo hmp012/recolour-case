@@ -24,7 +24,6 @@
 
     <!-- Main Table Card -->
     <div :style="{ 
-      flex: 1,
       display: 'flex',
       flexDirection: 'column',
       borderRadius: '12px', 
@@ -43,13 +42,12 @@
         removableSort
         responsiveLayout="scroll"
         scrollable
-        scrollHeight="flex"
-        :style="{ flex: 1, display: 'flex', flexDirection: 'column' }"
         :pt="{
           header: { style: { border: 'none' } },
-          wrapper: { style: { flex: '1 1 auto', display: 'flex', flexDirection: 'column' } },
-          table: { style: { flex: '1 1 auto' } },
-          tbody: { style: { flex: '1 1 auto' } }
+          wrapper: { style: { display: 'flex', flexDirection: 'column' } },
+          thead: { style: { height: '3rem' } },
+          headerCell: { style: { padding: '0.5rem 1rem' } },
+          bodyCell: { style: { padding: '0.5rem 1rem' } }
         }"
       >
         <template #empty>
@@ -59,7 +57,7 @@
           </div>
         </template>
 
-        <Column field="referenceCode" header="Reference" sortable :style="{ fontWeight: '600', color: '#f8fafc' }">
+        <Column field="referenceCode" header="Reference" sortable :style="{ fontWeight: '600', color: '#f8fafc', width: '120px' }">
           <template #body="{ data }">
             #{{ data.referenceCode }}
           </template>
@@ -67,11 +65,11 @@
 
         <Column field="style" header="Style" sortable :style="{ color: '#f8fafc' }"></Column>
 
-        <Column field="targetColor" header="Target Color" sortable :style="{ color: '#f8fafc' }"></Column>
+        <Column field="targetColor" header="Target Color" sortable :style="{ color: '#f8fafc', width: '180px' }"></Column>
 
-        <Column field="partner" header="Partner" sortable :style="{ color: '#f8fafc' }"></Column>
+        <Column field="partner" header="Partner" sortable :style="{ color: '#f8fafc', width: '180px' }"></Column>
 
-        <Column field="priority" header="Priority" sortable :style="{ width: '150px' }">
+        <Column field="priority" header="Priority" sortable :style="{ width: '120px' }">
           <template #body="{ data }">
             <Tag :value="data.priority" :severity="getPrioritySeverity(data.priority)" :style="{ borderRadius: '6px', padding: '0.25rem 0.6rem' }" />
           </template>
@@ -86,9 +84,28 @@
           </template>
         </Column>
 
-        <Column header="Actions" :style="{ width: '100px', textAlign: 'center' }">
+        <Column v-if="authStore.isManager" header="Actions" :style="{ width: '150px', textAlign: 'center' }">
           <template #body="{ data }">
-            <Button icon="pi pi-chevron-right" text rounded severity="secondary" @click="viewDetails(data)" />
+            <div :style="{ display: 'flex', gap: '0.25rem', justifyContent: 'center' }">
+              <Button icon="pi pi-eye" text rounded severity="secondary" @click="viewDetails(data)" :style="{ color: '#94a3b8' }" />
+              
+              <template v-if="authStore.isManager && data.status === 'Pending'">
+                <Button 
+                  icon="pi pi-check" 
+                  text 
+                  rounded 
+                  severity="success" 
+                  @click="handleApproval(data.id, 'Completed')" 
+                />
+                <Button 
+                  icon="pi pi-times" 
+                  text 
+                  rounded 
+                  severity="danger" 
+                  @click="handleApproval(data.id, 'Rejected')" 
+                />
+              </template>
+            </div>
           </template>
         </Column>
       </DataTable>
@@ -100,6 +117,8 @@
 import { ref, onMounted } from 'vue'
 import { FilterMatchMode } from '@primevue/core/api'
 import { ticketService } from '@/services/ticketService'
+import { useAuthStore } from '@/stores/authStore'
+import { useToast } from 'primevue/usetoast'
 
 // PrimeVue Components
 import DataTable from 'primevue/datatable'
@@ -112,6 +131,8 @@ import InputIcon from 'primevue/inputicon'
 
 const tickets = ref([])
 const loading = ref(false)
+const authStore = useAuthStore()
+const toast = useToast()
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -128,6 +149,26 @@ const fetchTickets = async () => {
     console.error('Failed to fetch tickets:', error)
   } finally {
     loading.value = false
+  }
+}
+
+const handleApproval = async (id, status) => {
+  try {
+    await ticketService.update(id, { status })
+    toast.add({
+      severity: 'success',
+      summary: status === 'Completed' ? 'Ticket Accepted' : 'Ticket Rejected',
+      detail: `Status updated to ${status}`,
+      life: 3000
+    })
+    fetchTickets()
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update ticket status',
+      life: 5000
+    })
   }
 }
 

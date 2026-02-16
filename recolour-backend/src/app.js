@@ -6,9 +6,12 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const port = 3000;
 const apiVersion = '1';
+const sequelize = require('./database/db');
+// Import models to register associations
+require('./database/models');
+
 const ticketRoutes = require('./routes/ticket.routes');
 const assetRoutes = require('./routes/asset.routes');
-const sequelize = require('./database/db');
 
 // Test database connection
 sequelize.authenticate()
