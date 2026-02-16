@@ -33,6 +33,8 @@ const ticketController = require('../controllers/ticket.controller');
  *         resultAssetId:
  *           type: string
  *           format: uuid
+ *         partner:
+ *           type: string
  *       required:
  *         - style
  *         - priority
