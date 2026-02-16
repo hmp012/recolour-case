@@ -59,13 +59,15 @@
           </div>
         </template>
 
-        <Column field="referenceCode" header="Reference" sortable :style="{ fontWeight: '600', color: '#334155' }">
+        <Column field="referenceCode" header="Reference" sortable :style="{ fontWeight: '600', color: '#f8fafc' }">
           <template #body="{ data }">
             #{{ data.referenceCode }}
           </template>
         </Column>
 
-        <Column field="style" header="Style" sortable></Column>
+        <Column field="style" header="Style" sortable :style="{ color: '#f8fafc' }"></Column>
+
+        <Column field="partner" header="Partner" sortable :style="{ color: '#f8fafc' }"></Column>
 
         <Column field="priority" header="Priority" sortable :style="{ width: '150px' }">
           <template #body="{ data }">

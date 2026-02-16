@@ -1,4 +1,4 @@
-# recoulour-frontend
+# recolour-frontend
 
 ## Project setup
 ```
