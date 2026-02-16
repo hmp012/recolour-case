@@ -1,5 +1,6 @@
 <template>
   <div class="app-layout">
+    <Toast />
     <AppNavbar />
     <div class="app-content">
       <SidebarPanel />
@@ -11,6 +12,7 @@
 </template>
 
 <script setup>
+import Toast from 'primevue/toast'
 import AppNavbar from '@/components/layout/AppNavbar.vue'
 import SidebarPanel from '@/components/layout/AppSidebar.vue'
 </script>
