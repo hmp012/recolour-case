@@ -2,8 +2,8 @@ const { Ticket, Asset } = require('../database/models');
 
 exports.createTicket = async (req, res) => {
     try {
-        const { style, priority, referenceCode, baseAssetId } = req.body;
-        const ticket = await Ticket.create({ style, priority, referenceCode, baseAssetId });
+        const { style, priority, referenceCode, baseAssetId, partner } = req.body;
+        const ticket = await Ticket.create({ style, priority, referenceCode, baseAssetId, partner });
         res.status(201).json(ticket);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create ticket: ' + error.message });
