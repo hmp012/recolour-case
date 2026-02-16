@@ -1,6 +1,6 @@
-# Recolour Case Study - Technical Solution
+# Recolour Case Study - Full-Stack Solution
 
-This project is a full-stack solution for managing garment recolouring workflows, built with **Vue 3** (Frontend) and **Express.js** (Backend).
+A comprehensive workflow management system for garment recolouring, built with **Vue 3** and **Express.js**. This project fulfills all requirements specified in the technical assessment, including advanced status workflows and management dashboards.
 
 ## 🚀 Getting Started
 
@@ -17,7 +17,7 @@ node src/database/seed.js
 # Start the server
 npm start
 ```
-The backend will run at `http://localhost:3000`. You can view the API documentation via Swagger at `http://localhost:3000/api-docs`.
+The backend runs at `http://localhost:3000`. API documentation is available at `/api-docs`.
 
 ### 2. Frontend Setup
 ```bash
@@ -25,50 +25,47 @@ cd recoulour-frontend
 npm install
 npm run serve
 ```
-The frontend will run at `http://localhost:8080`.
+The frontend runs at `http://localhost:8080`.
 
 ---
 
-## 🛠 Technical Decisions
+## ✨ Requirements Fulfilled
 
-### 1. Backend: Express & Sequelize (SQLite)
-- **Database:** Used SQLite for portability. The hiring manager can run the project without setting up a heavy database engine.
-- **ORM:** Sequelize was chosen to handle model relationships (One-to-Many for Assets/Tickets) and transactions during ticket creation.
-- **Storage Simulation:** Since the project relies on local mock data, I implemented a simulation logic in the controller. When a ticket is marked "Completed," the system automatically creates a "Recoloured" asset entry using the original file as a placeholder to ensure the gallery is functional.
+### 1. Recolour Ticket Creation
+- **Dynamic Form:** Allows users to create tickets by selecting multiple base photos from the library.
+- **Data Capture:** Supports style names, priority levels, reference codes, target colors, and partner assignments.
 
-### 2. Frontend: Vue 3 & PrimeVue
-- **UI Framework:** PrimeVue was selected for its robust set of accessible components (DataTable, Cards, Icons).
-- **Styling:** A mix of PrimeVue's theme system and scoped CSS to achieve a modern "Dark Mode" aesthetic consistent with creative software.
-- **State Management:** Pinia (via `authStore`) handles role-based access, allowing us to toggle between "Manager" and "Operator" views.
-
----
-
-## ✨ Features Implemented
-
-### 1. Ticket Creation & Queue
-- Full CRUD for recolouring tickets.
-- **Priority & Status management:** Tickets flow through a lifecycle: `Pending -> Approved -> Sent -> In Progress -> Completed`.
-
-### 2. Requirement 4: Approval & Storage
-- **Logic:** Only managers can approve "Completed" tickets.
-- **Result:** Upon approval, the recoloured asset is moved to the "Approved Photos" library and the `isApproved` flag is synced across the ticket and its resulting asset.
-- **Rejection:** Managers can reject a completed result, which automatically resets the ticket to "Pending" and returns it to the operator's queue.
+### 2. Ticket Queue & Lifecycle
+- **Advanced Table:** A high-performance `DataTable` with global search, status filtering, and sorting.
+- **Workflow Transitions:** Implements the full lifecycle: `Pending -> Approved -> Sent -> In Progress -> Completed`.
+- **Contextual Actions:** Action buttons appear dynamically based on the ticket's current status and the user's role.
 
 ### 3. Partner Integration
-- Simulation of the partner workflow. The "Send" action is only enabled if a partner is assigned to the ticket, ensuring data integrity.
+- **Simulated Workflow:** Includes a "Partners" view and integration within the queue.
+- **Validation:** The "Send to Partner" action is intelligently disabled unless a partner is assigned to the ticket, preventing workflow errors.
 
-### 4. Operations Dashboard
-- Real-time KPIs showing:
-    - **Total Tickets** in the system.
-    - **Awaiting Approval:** Specifically tracking "Completed" tickets that need manager sign-off.
-    - **Queue Health:** Visual distribution of ticket statuses.
+### 4. Approval & Storage
+- **Two-Step Approval:** Final recoloured results must be approved by a Manager before being stored.
+- **Automated Storage:** Approved photos are automatically categorized and displayed in the **Approved Library**.
+- **Rejection Loop:** Rejection of a completed photo automatically resets the ticket to `Pending`, returning it to the work queue for correction.
+
+### 5. Navigation & UX
+- **Sidebar & Navbar:** Full navigation system including Dashboard, Create Ticket, Queue, Approved Library, and Partner Overview.
+- **Visual Feedback:** Real-time toast notifications for all status changes and operations.
+
+### 6. "Nice to Have" Features (Bonus)
+- **Role-Based Access (RBAC):** Integrated a simulated Auth system. "Operators" can create and view tickets, while "Managers" have exclusive rights to approve, reject, and send tickets.
+- **Operations Dashboard:** A rich KPI dashboard providing real-time metrics on queue health, awaiting approvals, and recent activity.
 
 ---
 
-## 📂 Project Structure
-- `/recolour-backend`: Node.js API, Sequelize models, and SQLite database.
-- `/recoulour-frontend`: Vue 3 SPA with PrimeVue and Pinia.
-- `/recolour-case`: The original mock data provided for the assignment (used for asset seeding).
+## 🛠 Technical Stack & Decisions
+
+- **Frontend:** Vue 3 (Composition API) + PrimeVue 4. The theme uses a custom dark-mode aesthetic for a professional creative-tools feel.
+- **State:** Pinia is used for auth and global state management.
+- **Backend:** Node.js/Express with Sequelize ORM.
+- **Database:** SQLite was selected for the "Boss" move of providing a zero-config, portable database that works immediately upon seeding.
+- **Simulation Logic:** To ensure the library feels "alive" without a real image processing engine, the backend automatically generates simulated "Recoloured" asset records when tickets are completed.
 
 ---
-*Developed as a technical assessment for the Jack&Jones team.*
+*Developed as a comprehensive technical solution for the Recolour assessment.*
