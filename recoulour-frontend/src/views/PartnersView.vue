@@ -36,7 +36,7 @@
               Total Managed: {{ partner.total }}
             </div>
           </div>
-          <div :style="{ 
+          <!-- <div :style="{ 
             backgroundColor: '#334155', 
             padding: '0.5rem 0.75rem', 
             borderRadius: '8px',
@@ -44,18 +44,14 @@
           }">
             <div :style="{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase' }">Efficiency</div>
             <div :style="{ fontSize: '1.125rem', fontWeight: 'bold', color: '#10b981' }">94%</div>
-          </div>
+          </div> -->
         </div>
 
         <!-- KPI Row -->
         <div :style="{ display: 'flex', gap: '1rem' }">
           <div :style="{ flex: 1, backgroundColor: '#0f172a', padding: '1rem', borderRadius: '8px', textAlign: 'center' }">
-            <div :style="{ fontSize: '1.25rem', fontWeight: 'bold', color: '#6366f1' }">{{ partner.sent }}</div>
-            <div :style="{ fontSize: '0.75rem', color: '#94a3b8' }">Sent</div>
-          </div>
-          <div :style="{ flex: 1, backgroundColor: '#0f172a', padding: '1rem', borderRadius: '8px', textAlign: 'center' }">
-            <div :style="{ fontSize: '1.25rem', fontWeight: 'bold', color: '#f59e0b' }">{{ partner.inProgress }}</div>
-            <div :style="{ fontSize: '0.75rem', color: '#94a3b8' }">In Progress</div>
+            <div :style="{ fontSize: '1.25rem', fontWeight: 'bold', color: '#6366f1' }">{{ partner.approved }}</div>
+            <div :style="{ fontSize: '0.75rem', color: '#94a3b8' }">Approved</div>
           </div>
           <div :style="{ flex: 1, backgroundColor: '#0f172a', padding: '1rem', borderRadius: '8px', textAlign: 'center' }">
             <div :style="{ fontSize: '1.25rem', fontWeight: 'bold', color: '#10b981' }">{{ partner.completed }}</div>
@@ -113,13 +109,15 @@ const fetchStats = async () => {
     tickets.value = response.data
     
     partnerStats.value = partners.map(name => {
+      // Full list for the "Recent Activity" section
       const partnerTickets = tickets.value.filter(t => t.partner === name)
+      
       return {
         name,
         total: partnerTickets.length,
-        sent: partnerTickets.filter(t => t.status === 'Sent').length,
-        inProgress: partnerTickets.filter(t => t.status === 'In Progress').length,
-        completed: partnerTickets.filter(t => t.status === 'Completed' || t.status === 'Approved').length,
+        // Exclusive counts for the KPI section
+        approved: partnerTickets.filter(t => t.status === 'Approved').length,
+        completed: partnerTickets.filter(t => t.status === 'Completed').length,
         recentTickets: partnerTickets.slice(0, 3)
       }
     })
@@ -133,8 +131,8 @@ const getStatusSeverity = (status) => {
     case 'Pending': return 'info'
     case 'Sent': return 'help'
     case 'In Progress': return 'warn'
-    case 'Completed': 
     case 'Approved': return 'success'
+    case 'Completed': return 'success'
     case 'Rejected': return 'danger'
     default: return 'secondary'
   }
