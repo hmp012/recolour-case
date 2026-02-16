@@ -4,27 +4,27 @@ const routes = [
   {
     path: '/',
     name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue')
+    component: () => import('@/views/DashboardView.vue')
   },
   {
     path: '/create-ticket',
     name: 'CreateTicket',
-    component: () => import('@/views/CreateTicket.vue')
+    component: () => import('@/views/CreateTicketView.vue')
   },
   {
     path: '/queue',
     name: 'TicketQueue',
-    component: () => import('@/views/TicketQueue.vue')
+    component: () => import('@/views/TicketQueueView.vue')
   },
   {
     path: '/approved',
     name: 'ApprovedLibrary',
-    component: () => import('@/views/ApprovedLibrary.vue')
+    component: () => import('@/views/ApprovedLibraryView.vue')
   },
   {
     path: '/partners',
     name: 'Partners',
-    component: () => import('@/views/Partners.vue')
+    component: () => import('@/views/PartnersView.vue')
   }
 ]
 
