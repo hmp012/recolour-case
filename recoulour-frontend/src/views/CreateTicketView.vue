@@ -29,7 +29,7 @@
           <div 
             v-for="asset in assets" 
             :key="asset.id"
-            @click="selectedAsset = asset"
+            @click="toggleAsset(asset)"
             @mouseenter="hoveredAsset = asset"
             @mouseleave="hoveredAsset = null"
             :style="{
@@ -37,7 +37,7 @@
               borderRadius: '8px',
               overflow: 'hidden',
               cursor: 'pointer',
-              border: selectedAsset?.id === asset.id ? '3px solid #6366f1' : '1px solid #334155',
+              border: isSelected(asset) ? '3px solid #6366f1' : '1px solid #334155',
               backgroundColor: '#ffffff',
               transition: 'all 0.2s',
               height: '140px',
@@ -52,7 +52,7 @@
             />
             
             <!-- Selection Checkmark -->
-            <div v-if="selectedAsset?.id === asset.id" :style="{
+            <div v-if="isSelected(asset)" :style="{
               position: 'absolute',
               top: '4px',
               right: '4px',
@@ -141,20 +141,26 @@
         </div>
 
         <div :style="{ display: 'flex', flexDirection: 'column', gap: '1rem' }">
-          <div v-if="selectedAsset" :style="{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', backgroundColor: '#334155', borderRadius: '8px' }">
-            <img :src="getAssetUrl(selectedAsset.filePath)" :style="{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }" />
-            <div :style="{ overflow: 'hidden', flex: 1 }">
-              <div :style="{ fontSize: '0.75rem', color: '#94a3b8' }">Selected Photo</div>
-              <div :style="{ fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }">{{ selectedAsset.filePath.split('/').pop() }}</div>
+          <div v-if="selectedAssets.length > 0" :style="{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }">
+            <div :style="{ fontSize: '0.875rem', color: '#94a3b8' }">Selected Photos ({{ selectedAssets.length }})</div>
+            <div 
+              v-for="asset in selectedAssets" 
+              :key="asset.id"
+              :style="{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem', backgroundColor: '#334155', borderRadius: '8px' }"
+            >
+              <img :src="getAssetUrl(asset.filePath)" :style="{ width: '32px', height: '32px', borderRadius: '4px', objectFit: 'cover' }" />
+              <div :style="{ overflow: 'hidden', flex: 1 }">
+                <div :style="{ fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }">{{ asset.filePath.split('/').pop() }}</div>
+              </div>
+              <Button 
+                icon="pi pi-times" 
+                severity="secondary" 
+                text 
+                rounded 
+                @click="toggleAsset(asset)" 
+                :style="{ width: '1.5rem', height: '1.5rem' }"
+              />
             </div>
-            <Button 
-              icon="pi pi-times" 
-              severity="secondary" 
-              text 
-              rounded 
-              @click="selectedAsset = null" 
-              :style="{ width: '2rem', height: '2rem' }"
-            />
           </div>
           
           <Button 
@@ -186,7 +192,7 @@ const router = useRouter()
 const toast = useToast()
 
 const assets = ref([])
-const selectedAsset = ref(null)
+const selectedAssets = ref([])
 const hoveredAsset = ref(null)
 const submitting = ref(false)
 
@@ -202,8 +208,21 @@ const form = ref({
 })
 
 const isFormValid = computed(() => {
-  return selectedAsset.value && form.value.style.trim() && form.value.targetColor.trim() && form.value.partner
+  return selectedAssets.value.length > 0 && form.value.style.trim() && form.value.targetColor.trim() && form.value.partner
 })
+
+const toggleAsset = (asset) => {
+  const index = selectedAssets.value.findIndex(a => a.id === asset.id)
+  if (index === -1) {
+    selectedAssets.value.push(asset)
+  } else {
+    selectedAssets.value.splice(index, 1)
+  }
+}
+
+const isSelected = (asset) => {
+  return selectedAssets.value.some(a => a.id === asset.id)
+}
 
 const fetchAssets = async () => {
   try {
@@ -229,7 +248,7 @@ const submitTicket = async () => {
   try {
     const payload = {
       ...form.value,
-      baseAssetId: selectedAsset.value.id,
+      baseAssetIds: selectedAssets.value.map(a => a.id),
       // If referenceCode is empty, maybe generate one or let backend handle it
       referenceCode: form.value.referenceCode || `REC-${Math.floor(Math.random() * 10000)}`
     }
