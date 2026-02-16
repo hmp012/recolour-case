@@ -10,17 +10,9 @@
   </div>
 </template>
 
-<script>
-import AppNavbar from '@/components/layout/Navbar.vue'
-import SidebarPanel from '@/components/layout/Sidebar.vue'
-
-export default {
-  name: 'App',
-  components: {
-    AppNavbar,
-    SidebarPanel
-  }
-}
+<script setup>
+import AppNavbar from '@/components/layout/AppNavbar.vue'
+import SidebarPanel from '@/components/layout/AppSidebar.vue'
 </script>
 
 <style>
@@ -46,8 +38,7 @@ body {
 .main-content {
   flex: 1;
   padding: 2rem;
-  background-color: #f8fafc;
+  background-color: #242323;
   overflow-y: auto;
 }
 </style>
-
