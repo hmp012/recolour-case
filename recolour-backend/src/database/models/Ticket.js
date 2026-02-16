@@ -24,6 +24,9 @@ const Ticket = sequelize.define('Ticket', {
     partner: {
         type: DataTypes.STRING
     },
+    targetColor: {
+        type: DataTypes.STRING
+    },
     isApproved: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

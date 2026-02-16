@@ -35,6 +35,8 @@ const ticketController = require('../controllers/ticket.controller');
  *           format: uuid
  *         partner:
  *           type: string
+ *         targetColor:
+ *           type: string
  *       required:
  *         - style
  *         - priority
