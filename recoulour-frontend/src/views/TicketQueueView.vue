@@ -87,8 +87,6 @@
         <Column v-if="authStore.isManager" header="Actions" :style="{ width: '150px', textAlign: 'center' }">
           <template #body="{ data }">
             <div :style="{ display: 'flex', gap: '0.25rem', justifyContent: 'center' }">
-              <Button icon="pi pi-eye" text rounded severity="secondary" @click="viewDetails(data)" :style="{ color: '#94a3b8' }" />
-              
               <template v-if="authStore.isManager && data.status === 'Pending'">
                 <Button 
                   icon="pi pi-check" 
@@ -96,6 +94,7 @@
                   rounded 
                   severity="success" 
                   @click="handleApproval(data.id, 'Approved')" 
+                  v-tooltip="'Approve Ticket'"
                 />
                 <Button 
                   icon="pi pi-times" 
@@ -103,6 +102,51 @@
                   rounded 
                   severity="danger" 
                   @click="handleApproval(data.id, 'Rejected')" 
+                  v-tooltip="'Reject Ticket'"
+                />
+              </template>
+
+              <!-- Transition: Sent -> In Progress -->
+              <template v-if="authStore.isManager && data.status === 'Sent'">
+                <Button 
+                  icon="pi pi-cog" 
+                  text 
+                  rounded 
+                  severity="help" 
+                  @click="handleApproval(data.id, 'In Progress')" 
+                  v-tooltip="'Mark as In Progress'"
+                />
+              </template>
+
+              <!-- Transition: In Progress -> Completed -->
+              <template v-if="authStore.isManager && data.status === 'In Progress'">
+                <Button 
+                  icon="pi pi-flag-checkered" 
+                  text 
+                  rounded 
+                  severity="success" 
+                  @click="handleApproval(data.id, 'Completed')" 
+                  v-tooltip="'Mark as Completed'"
+                />
+              </template>
+
+              <!-- Requirement 4: Approval & Storage for Completed tickets -->
+              <template v-if="authStore.isManager && data.status === 'Completed' && !data.isApproved">
+                <Button 
+                  icon="pi pi-check-circle" 
+                  text 
+                  rounded 
+                  severity="info" 
+                  @click="handleApproval(data.id, 'Completed', true)" 
+                  v-tooltip="'Approve to Library'"
+                />
+                <Button 
+                  icon="pi pi-undo" 
+                  text 
+                  rounded 
+                  severity="warning" 
+                  @click="handleApproval(data.id, 'Pending', false)" 
+                  v-tooltip="'Reject & Return to Queue'"
                 />
               </template>
 
@@ -114,7 +158,8 @@
                   rounded 
                   severity="info" 
                   @click="handleApproval(data.id, 'Sent')" 
-                  v-tooltip="'Send to Partner'"
+                  v-tooltip="data.partner ? 'Send to Partner' : 'Partner required'"
+                  :disabled="!data.partner"
                 />
               </template>
             </div>
@@ -164,21 +209,38 @@ const fetchTickets = async () => {
   }
 }
 
-const handleApproval = async (id, status) => {
+const handleApproval = async (id, status, isApproved = undefined) => {
   try {
-    await ticketService.update(id, { status })
+    const updateData = { status }
+    if (isApproved !== undefined) {
+      updateData.isApproved = isApproved
+    }
+    
+    await ticketService.update(id, updateData)
     
     let summary = 'Status Updated'
     let detail = `Status updated to ${status}`
 
-    if (status === 'Approved') {
+    if (isApproved === true) {
+      summary = 'Photo Approved'
+      detail = 'The recoloured photo has been stored in the Approved Library.'
+    } else if (status === 'Approved') {
       summary = 'Ticket Approved'
       detail = 'The ticket is ready to be sent to the partner.'
     } else if (status === 'Sent') {
       summary = 'Sent to Partner'
       detail = 'The partner has been notified and the ticket is now "Sent".'
+    } else if (status === 'In Progress') {
+      summary = 'Ticket In Progress'
+      detail = 'The partner has started working on the recolouring.'
+    } else if (status === 'Completed' && isApproved === undefined) {
+      summary = 'Ticket Completed'
+      detail = 'The partner has finished. Awaiting final approval.'
     } else if (status === 'Rejected') {
       summary = 'Ticket Rejected'
+    } else if (status === 'Pending' && isApproved === undefined) {
+      summary = 'Ticket Returned to Queue'
+      detail = 'The ticket has been reset to Pending status.'
     }
 
     toast.add({
@@ -217,10 +279,6 @@ const getStatusColor = (status) => {
     case 'Rejected': return '#ef4444'    // Red-500
     default: return '#cbd5e1'
   }
-}
-
-const viewDetails = (ticket) => {
-  console.log('Navigate to ticket details:', ticket.id)
 }
 
 onMounted(() => {

@@ -1,16 +1,21 @@
-const { Asset } = require('../database/models');
+const { Asset, Ticket } = require('../database/models');
 
 /**
  * Get all assets
- * Optional query param: type (Original, Recoloured)
+ * Optional query param: type (Original, Recoloured), isApproved
  */
 exports.getAllAssets = async (req, res) => {
     try {
-        const { type } = req.query;
-        const whereClause = type ? { type } : {};
+        const { type, isApproved } = req.query;
+        const whereClause = {};
+        if (type) whereClause.type = type;
+        if (isApproved !== undefined) whereClause.isApproved = isApproved === 'true';
         
         const assets = await Asset.findAll({
             where: whereClause,
+            include: [
+                { model: Ticket, as: 'ticket' }
+            ],
             order: [['createdAt', 'DESC']]
         });
         

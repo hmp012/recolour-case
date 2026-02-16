@@ -15,6 +15,10 @@ const Asset = sequelize.define('Asset', {
     type: {
         type: DataTypes.ENUM('Original', 'Recoloured'),
         defaultValue: 'Original'
+    },
+    isApproved: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 });
 
