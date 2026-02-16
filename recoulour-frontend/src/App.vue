@@ -12,7 +12,7 @@
 
 <script>
 import AppNavbar from '@/components/layout/Navbar.vue'
-import SidebarPanel from '@/components/layout/Sidebar.vue'
+import SidebarPanel from '@/components/layout/AppSidebar.vue'
 
 export default {
   name: 'App',
