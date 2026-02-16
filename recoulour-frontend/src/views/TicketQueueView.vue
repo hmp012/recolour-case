@@ -105,6 +105,18 @@
                   @click="handleApproval(data.id, 'Rejected')" 
                 />
               </template>
+
+              <!-- Partner Integration: Send to Partner -->
+              <template v-if="authStore.isManager && data.status === 'Approved'">
+                <Button 
+                  icon="pi pi-send" 
+                  text 
+                  rounded 
+                  severity="info" 
+                  @click="handleApproval(data.id, 'Sent')" 
+                  v-tooltip="'Send to Partner'"
+                />
+              </template>
             </div>
           </template>
         </Column>
@@ -155,10 +167,24 @@ const fetchTickets = async () => {
 const handleApproval = async (id, status) => {
   try {
     await ticketService.update(id, { status })
+    
+    let summary = 'Status Updated'
+    let detail = `Status updated to ${status}`
+
+    if (status === 'Approved') {
+      summary = 'Ticket Approved'
+      detail = 'The ticket is ready to be sent to the partner.'
+    } else if (status === 'Sent') {
+      summary = 'Sent to Partner'
+      detail = 'The partner has been notified and the ticket is now "Sent".'
+    } else if (status === 'Rejected') {
+      summary = 'Ticket Rejected'
+    }
+
     toast.add({
       severity: 'success',
-      summary: status === 'Approved' ? 'Ticket Approved' : 'Ticket Rejected',
-      detail: `Status updated to ${status}`,
+      summary,
+      detail,
       life: 3000
     })
     fetchTickets()
