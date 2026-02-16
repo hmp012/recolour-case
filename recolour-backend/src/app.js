@@ -17,6 +17,10 @@ sequelize.authenticate()
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static assets from the recolour-case directory
+app.use('/assets-storage', express.static(path.join(__dirname, '../../recolour-case')));
+
 app.use(`/api/v${apiVersion}/tickets`, ticketRoutes);
 app.use(`/api/v${apiVersion}/assets`, assetRoutes);
 

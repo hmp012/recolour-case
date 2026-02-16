@@ -43,6 +43,6 @@ body {
   flex-direction: column;
   padding: 2rem;
   background-color: #242323;
-  overflow: hidden;
+  overflow-y: auto;
 }
 </style>
