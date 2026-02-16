@@ -2,8 +2,13 @@ const { Ticket, Asset } = require('../database/models');
 
 exports.createTicket = async (req, res) => {
     try {
-        const { style, priority, referenceCode, baseAssetId, partner, targetColor } = req.body;
-        const ticket = await Ticket.create({ style, priority, referenceCode, baseAssetId, partner, targetColor });
+        const { style, priority, referenceCode, baseAssetIds, partner, targetColor } = req.body;
+        const ticket = await Ticket.create({ style, priority, referenceCode, partner, targetColor });
+        
+        if (baseAssetIds && baseAssetIds.length > 0) {
+            await ticket.setBaseAssets(baseAssetIds);
+        }
+        
         res.status(201).json(ticket);
     } catch (error) {
         res.status(500).json({ error: 'Failed to create ticket: ' + error.message });
@@ -14,7 +19,7 @@ exports.getAllTickets = async (req, res) => {
     try {
         const tickets = await Ticket.findAll({ 
             include: [
-                { model: Asset, as: 'baseAsset' },
+                { model: Asset, as: 'baseAssets' },
                 { model: Asset, as: 'resultAsset' }
             ] 
         });
