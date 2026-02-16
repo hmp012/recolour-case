@@ -1,16 +1,32 @@
 const { Ticket, Asset } = require('../database/models');
+const sequelize = require('../database/db');
 
 exports.createTicket = async (req, res) => {
+    const t = await sequelize.transaction();
     try {
         const { style, priority, referenceCode, baseAssetIds, partner, targetColor } = req.body;
-        const ticket = await Ticket.create({ style, priority, referenceCode, partner, targetColor });
+        const ticket = await Ticket.create(
+            { style, priority, referenceCode, partner, targetColor },
+            { transaction: t }
+        );
         
         if (baseAssetIds && baseAssetIds.length > 0) {
-            await ticket.setBaseAssets(baseAssetIds);
+            // Find the assets first to ensure they exist
+            const assets = await Asset.findAll({
+                where: { id: baseAssetIds },
+                transaction: t
+            });
+            
+            if (assets.length > 0) {
+                await ticket.setBaseAssets(assets, { transaction: t });
+            }
         }
         
+        await t.commit();
         res.status(201).json(ticket);
     } catch (error) {
+        await t.rollback();
+        console.error('Ticket Creation Error:', error);
         res.status(500).json({ error: 'Failed to create ticket: ' + error.message });
     }
 };
