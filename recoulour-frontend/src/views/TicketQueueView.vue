@@ -67,6 +67,8 @@
 
         <Column field="style" header="Style" sortable :style="{ color: '#f8fafc' }"></Column>
 
+        <Column field="targetColor" header="Target Color" sortable :style="{ color: '#f8fafc' }"></Column>
+
         <Column field="partner" header="Partner" sortable :style="{ color: '#f8fafc' }"></Column>
 
         <Column field="priority" header="Priority" sortable :style="{ width: '150px' }">
