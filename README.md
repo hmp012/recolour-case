@@ -15,7 +15,7 @@ npm install
 # Seed the database with initial assets from the recolour-case folder
 node src/database/seed.js
 # Start the server
-npm start
+node src/app.js
 ```
 The backend runs at `http://localhost:3000`. API documentation is available at `/api-docs`.
 
